@@ -355,3 +355,16 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
   KEY idx_newsletter_subscribers_status (is_subscribed, subscribed_at),
   KEY idx_newsletter_subscribers_source (source)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS vip_registrations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    whatsapp VARCHAR(50) NOT NULL UNIQUE,
+    email_fingerprint TEXT NOT NULL,
+    whatsapp_fingerprint TEXT NOT NULL,
+    otp_code VARCHAR(10) NOT NULL,
+    is_verified TINYINT(1) DEFAULT 0,
+    access_pass VARCHAR(20) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

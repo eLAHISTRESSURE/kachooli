@@ -27,6 +27,8 @@ coverage.xml
 database/*.db
 *.db
 *.sqlite3
+*.sql
+!database/schema.sql
 
 # Tool specific
 .sixth/
