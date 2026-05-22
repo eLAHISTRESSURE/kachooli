@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %} | Sign up{% endblock %}
+
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-copy">
+    <p class="eyebrow">Join the club</p>
+    <h1>Create your account for a faster, more personal shopping journey.</h1>
+    <p>
+      Sign up to track orders, unlock full product details, and enjoy a polished COD checkout flow.
+    </p>
+  </div>
+
+  <div class="auth-card">
+    {% if is_logged_in %}
+      <div class="auth-note">
+        <h2>Your account is already active.</h2>
+        <a class="button button--solid" href="{{ url_for('shop') }}">Continue shopping</a>
+      </div>
+    {% else %}
+      <form class="form-stack" action="{{ url_for('signup') }}" method="post">
+        <label>
+          <span>Full name</span>
+          <input type="text" name="name" autocomplete="name" required>
+        </label>
+        <label>
+          <span>Email address</span>
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" autocomplete="new-password" required>
+        </label>
+        <label>
+          <span>Confirm password</span>
+          <input type="password" name="confirm_password" autocomplete="new-password" required>
+        </label>
+        <button class="button button--solid" type="submit">Create account</button>
+      </form>
+      <p class="auth-alt">
+        Already have an account? <a href="{{ url_for('login') }}">Login</a>
+      </p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

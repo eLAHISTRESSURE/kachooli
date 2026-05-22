@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %} | Login{% endblock %}
+
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-copy">
+    <p class="eyebrow">Welcome back</p>
+    <h1>Sign in to save your wishlist and checkout faster.</h1>
+    <p>
+      Enjoy a smoother shopping experience with COD-friendly ordering, saved preferences, and access to member offers.
+    </p>
+  </div>
+
+  <div class="auth-card">
+    {% if is_logged_in %}
+      <div class="auth-note">
+        <h2>You are already signed in.</h2>
+        <a class="button button--solid" href="{{ url_for('dashboard') }}">Go to dashboard</a>
+      </div>
+    {% else %}
+      <form class="form-stack" action="{{ url_for('login') }}" method="post">
+        <label>
+          <span>Email address</span>
+          <input type="email" name="email" autocomplete="email" required>
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" name="remember">
+          <span>Remember me</span>
+        </label>
+        <button class="button button--solid" type="submit">Login</button>
+      </form>
+      <p class="auth-alt">
+        New here? <a href="{{ url_for('signup') }}">Create an account</a>
+      </p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

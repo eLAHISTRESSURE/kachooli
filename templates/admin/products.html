@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Products | Admin | Kacooli Boutique{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<section class="admin-shell admin-products">
+  <header class="admin-hero">
+    <div>
+      <p class="section-eyebrow">Secure admin area</p>
+      <h1>Products</h1>
+      <p class="section-lead">Manage stock, pricing, visibility, and merchandising across the catalogue.</p>
+    </div>
+    <div class="admin-trust">
+      <span class="badge badge-secure">Protected access</span>
+      <span class="admin-meta">Inventory sync: live</span>
+    </div>
+  </header>
+
+  <nav class="admin-subnav" aria-label="Admin navigation">
+    <a href="/admin">Dashboard</a>
+    <a class="is-active" href="/admin/products">Products</a>
+    <a href="/admin/orders">Orders</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/banners">Banners</a>
+    <a href="/admin/reviews">Reviews</a>
+    <a href="/admin/coupons">Coupons</a>
+  </nav>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <p class="section-eyebrow">Catalogue control</p>
+        <h2>Search and filters</h2>
+      </div>
+      <a class="text-link" href="/admin/products">Reset</a>
+    </div>
+
+    <div class="table-toolbar">
+      <label class="field field-search" for="product-search">
+        <span class="sr-only">Search products</span>
+        <input id="product-search" type="search" placeholder="Search product, SKU, or category" />
+      </label>
+      <select aria-label="Category filter">
+        <option>All categories</option>
+        <option>Bras</option>
+        <option>Panties</option>
+        <option>Sets</option>
+        <option>Loungewear</option>
+      </select>
+      <select aria-label="Inventory filter">
+        <option>All stock states</option>
+        <option>In stock</option>
+        <option>Low stock</option>
+        <option>Out of stock</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>SKU</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Visibility</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Deluxe lace set</td>
+            <td>DS-2401</td>
+            <td>R 899</td>
+            <td><span class="badge badge-success">24 in stock</span></td>
+            <td><span class="badge badge-neutral">Published</span></td>
+            <td><a class="text-link" href="/admin/products">Edit</a></td>
+          </tr>
+          <tr>
+            <td>Everyday balconette bra</td>
+            <td>EB-1820</td>
+            <td>R 549</td>
+            <td><span class="badge badge-warning">7 left</span></td>
+            <td><span class="badge badge-neutral">Published</span></td>
+            <td><a class="text-link" href="/admin/products">Edit</a></td>
+          </tr>
+          <tr>
+            <td>Seamless thong pack</td>
+            <td>SP-0312</td>
+            <td>R 279</td>
+            <td><span class="badge badge-danger">Out</span></td>
+            <td><span class="badge badge-muted">Hidden</span></td>
+            <td><a class="text-link" href="/admin/products">Edit</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
+{% endblock %}

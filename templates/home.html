@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %} | Premium Luxury Lingerie & Innerwear{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 4rem; align-items: center; padding: 4rem 0; margin-bottom: 4rem;">
+  <div class="hero-copy">
+    <p class="eyebrow" style="color: var(--color-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem;">Luxury lingerie boutique</p>
+    <h1 style="font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4.25rem); line-height: 1.05; color: var(--color-black); margin: 0.75rem 0 1.5rem 0; font-weight: 700;">Feel confident in soft, sculpted essentials.</h1>
+    <p class="hero-text" style="font-size: 1.15rem; color: var(--color-muted); line-height: 1.6; margin-bottom: 2rem;">
+      Discover elegant sets, everyday comfort, and occasion-ready silhouettes designed to hug your curves, featuring secure Cash on Delivery delivery.
+    </p>
+    <div class="hero-actions" style="display: flex; gap: 1rem;">
+      <a class="button button--solid" href="{{ url_for('shop') }}" style="padding: 0.85rem 2rem; min-height: 50px; font-size: 1.05rem;">Shop Collection</a>
+      {% if not is_logged_in %}
+        <a class="button button--outline" href="{{ url_for('signup') }}" style="padding: 0.85rem 2rem; min-height: 50px; font-size: 1.05rem; border-color: var(--color-black);">Create Account</a>
+      {% else %}
+        <a class="button button--outline" href="{{ url_for('dashboard') }}" style="padding: 0.85rem 2rem; min-height: 50px; font-size: 1.05rem; border-color: var(--color-black);">My Dashboard</a>
+      {% endif %}
+    </div>
+    <ul class="trust-points" style="display: flex; gap: 2rem; list-style: none; padding: 0; margin: 3rem 0 0 0; font-weight: 600; font-size: 0.9rem; color: var(--color-charcoal);">
+      <li style="display: flex; align-items: center; gap: 0.5rem;">💵 Cash on Delivery</li>
+      <li style="display: flex; align-items: center; gap: 0.5rem;">💎 Discreet Packaging</li>
+      <li style="display: flex; align-items: center; gap: 0.5rem;">⚡ Fast Dhaka Delivery</li>
+    </ul>
+  </div>
+
+  <div class="hero-showcase">
+    {% if banners %}
+      {% for banner in banners %}
+        <article class="banner-card" style="width: 100%; display: {% if loop.first %}block{% else %}none{% endif %};">
+          <img src="{{ banner.image_url }}" alt="{{ banner.title }}" style="width: 100%; height: 450px; object-fit: cover; border-radius: var(--radius-lg);">
+          <div class="banner-card__content">
+            <span class="eyebrow" style="color: var(--color-gold);">{{ banner.button_text|default('Exclusive') }}</span>
+            <h3>{{ banner.title }}</h3>
+            <p>{{ banner.subtitle }}</p>
+          </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      <article class="banner-card" style="width: 100%;">
+        <div style="background: linear-gradient(135deg, var(--color-blush-soft), var(--color-gold-soft)); width: 100%; height: 450px; border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: flex-end; padding: 3rem; box-shadow: var(--color-shadow-soft);">
+          <span class="eyebrow" style="color: var(--color-gold); font-weight: 700; margin-bottom: 0.5rem;">Eid Season</span>
+          <h2 style="font-family: var(--font-serif); font-size: 2.25rem; color: var(--color-black); margin: 0 0 0.5rem 0; line-height: 1.1;">Refined Lingerie for Every Day</h2>
+          <p style="color: var(--color-muted); margin: 0; font-size: 1rem;">Shop premium silhouettes curated for exquisite comfort, fit, and confidence.</p>
+        </div>
+      </article>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Festive Countdown Banner -->
+<section class="flash-sale-banner">
+  <span class="eyebrow" style="color: var(--color-gold);">Limited Time Eid Offer</span>
+  <h2>Eid Special Flash Sale is Live!</h2>
+  <p style="margin-bottom: 1.5rem; font-size: 1.1rem; opacity: 0.9;">Enjoy up to <strong>40% OFF</strong> + Free Shipping on orders above 2,000 TK.</p>
+  <div class="eid-countdown" id="countdown">
+    <div class="countdown-item">
+      <span class="countdown-val" id="days">03</span>
+      <span class="countdown-label">Days</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-val" id="hours">12</span>
+      <span class="countdown-label">Hours</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-val" id="minutes">45</span>
+      <span class="countdown-label">Mins</span>
+    </div>
+    <div class="countdown-item">
+      <span class="countdown-val" id="seconds">30</span>
+      <span class="countdown-label">Secs</span>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Categories -->
+<section class="section" style="margin-bottom: 5rem;">
+  <div class="section-heading" style="text-align: center;">
+    <p class="eyebrow">Featured categories</p>
+    <h2>Discover Your Fit</h2>
+  </div>
+
+  <div class="category-grid">
+    {% for category in categories %}
+      <a class="banner-card" href="{{ url_for('shop') }}?category={{ category.id }}" style="height: 280px; display: block; border-radius: var(--radius-lg); text-decoration: none;">
+        <div style="background: linear-gradient(135deg, var(--color-blush-soft), var(--color-cream)); height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem; transition: transform 0.2s;">
+          <h3 style="font-family: var(--font-serif); font-size: 1.75rem; color: var(--color-black); margin-bottom: 0.25rem;">{{ category.name }}</h3>
+          <span style="color: var(--color-gold); font-weight: 700; font-size: 0.9rem;">Browse Category →</span>
+        </div>
+      </a>
+    {% else %}
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 3rem; text-align: center;">Curated categories will appear here soon.</div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Best Sellers Section -->
+<section class="section" style="margin-bottom: 5rem;">
+  <div class="section-heading" style="text-align: center;">
+    <p class="eyebrow">Best Sellers</p>
+    <h2>Premium Pieces, Easy to Love</h2>
+  </div>
+
+  <div class="product-grid">
+    {% for p in bestseller_products %}
+      <article class="product-card" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; transition: box-shadow var(--transition-fast);">
+        <a class="product-card__media" href="{{ url_for('product_detail', slug=p.slug) }}" style="display: block; height: 320px; overflow: hidden; background: var(--color-cream); position: relative;">
+          {% if p.image_url %}
+            <img src="{{ p.image_url }}" alt="{{ p.name }}" class="{% if not is_logged_in %}blurred-img{% endif %}" style="width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-slow); {% if not is_logged_in %}filter: blur(8px);{% endif %}">
+          {% else %}
+            <img src="/static/images/placeholder.jpg" alt="{{ p.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+          {% endif %}
+          {% if not is_logged_in %}
+            <div class="overlay-label" style="position: absolute; inset: 0; background: rgba(0,0,0,0.15); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 0.85rem; text-align: center; padding: 1rem;">
+              🔑 Sign In To View Details
+            </div>
+          {% endif %}
+        </a>
+        <div class="product-card__body" style="padding: 1.5rem;">
+          <h3 style="font-family: var(--font-serif); font-size: 1.15rem; margin: 0 0 0.5rem; font-weight: 700; height: 2.8rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+            <a href="{{ url_for('product_detail', slug=p.slug) }}" style="color: var(--color-black);">{{ p.name }}</a>
+          </h3>
+          <div class="product-card__footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+            <strong style="color: var(--color-gold); font-size: 1.1rem;">{{ p.price }} {{ currency_symbol }}</strong>
+            <a class="button button--small button--solid" href="{{ url_for('product_detail', slug=p.slug) }}">View Piece</a>
+          </div>
+        </div>
+      </article>
+    {% else %}
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 4rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-alt);">
+        Our curated edit of best-selling products is coming soon.
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Featured Split Section -->
+<section class="section section--split" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-bottom: 5rem;">
+  <div class="info-panel" style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 3rem; border-radius: var(--radius-lg);">
+    <p class="eyebrow" style="color: var(--color-gold);">Why customers choose us</p>
+    <h2 style="font-family: var(--font-serif); font-size: 2rem; color: var(--color-black); margin-top: 0;">Elegant Design with Practical Trust Signals</h2>
+    <p style="color: var(--color-muted); line-height: 1.6; font-size: 1.05rem;">
+      We prioritize comfort-first lingerie, clear sizing cues, discreet packaging, and a cash-on-delivery flow that feels safe on mobile.
+    </p>
+  </div>
+  <div class="info-panel info-panel--dark" style="background: var(--color-black); color: #fff; padding: 3rem; border-radius: var(--radius-lg);">
+    <p class="eyebrow" style="color: var(--color-gold);">Shop with confidence</p>
+    <ul class="feature-list" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem; font-weight: 600;">
+      <li style="display: flex; align-items: center; gap: 0.5rem;">🔄 Easy exchange guidance if fit isn't perfect</li>
+      <li style="display: flex; align-items: center; gap: 0.5rem;">📞 Responsive support before ordering</li>
+      <li style="display: flex; align-items: center; gap: 0.5rem;">💵 COD-first payment checkout</li>
+      <li style="display: flex; align-items: center; gap: 0.5rem;">💎 Luxury brand presentation and discreet shipping</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Customer Reviews Section -->
+<section class="section" style="margin-bottom: 5rem;">
+  <div class="section-heading" style="text-align: center;">
+    <p class="eyebrow">Love Notes</p>
+    <h2>What Our Customers Say</h2>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem;">
+    {% for review in reviews %}
+      <blockquote class="review-card" style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 2.5rem; border-radius: var(--radius-lg); margin: 0; box-shadow: var(--color-shadow-soft);">
+        <div style="color: var(--color-gold); font-size: 1.1rem; margin-bottom: 1rem;">
+          {% for i in range(1, 6) %}
+            {% if review.rating >= i %}★{% else %}☆{% endif %}
+          {% endfor %}
+        </div>
+        <p style="font-style: italic; color: var(--color-charcoal); line-height: 1.6; margin-bottom: 1.5rem; font-size: 1rem;">“{{ review.comment }}”</p>
+        <footer style="display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem;">
+          <strong style="color: var(--color-black);">{{ review.customer_name }}</strong>
+          <span style="color: var(--color-muted); font-weight: 600;">Verified Purchase</span>
+        </footer>
+      </blockquote>
+    {% else %}
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 4rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-alt);">
+        Customer reviews and love notes will appear here soon.
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Simple Countdown Timer Logic
+(function() {
+  var countdownDate = new Date();
+  countdownDate.setDate(countdownDate.getDate() + 3); // 3 days from now
+  
+  function updateCountdown() {
+    var now = new Date().getTime();
+    var distance = countdownDate - now;
+    
+    if (distance < 0) {
+      document.getElementById('countdown').style.display = 'none';
+      return;
+    }
+    
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    document.getElementById('days').textContent = days < 10 ? '0' + days : days;
+    document.getElementById('hours').textContent = hours < 10 ? '0' + hours : hours;
+    document.getElementById('minutes').textContent = minutes < 10 ? '0' + minutes : minutes;
+    document.getElementById('seconds').textContent = seconds < 10 ? '0' + seconds : seconds;
+  }
+  
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+})();
+</script>
+{% endblock %}

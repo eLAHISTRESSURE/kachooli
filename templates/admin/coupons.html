@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Coupons | Admin | Kacooli Boutique{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<section class="admin-shell admin-coupons">
+  <header class="admin-hero">
+    <div>
+      <p class="section-eyebrow">Secure admin area</p>
+      <h1>Coupons</h1>
+      <p class="section-lead">Create discount codes that support COD conversion, repeat purchase, and basket growth.</p>
+    </div>
+    <div class="admin-trust">
+      <span class="badge badge-secure">Protected access</span>
+      <span class="admin-meta">Usage limits tracked</span>
+    </div>
+  </header>
+
+  <nav class="admin-subnav" aria-label="Admin navigation">
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/products">Products</a>
+    <a href="/admin/orders">Orders</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/banners">Banners</a>
+    <a href="/admin/reviews">Reviews</a>
+    <a class="is-active" href="/admin/coupons">Coupons</a>
+  </nav>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <p class="section-eyebrow">Promotions</p>
+        <h2>Search and coupon status</h2>
+      </div>
+      <a class="text-link" href="/admin/coupons">Create coupon</a>
+    </div>
+
+    <div class="table-toolbar">
+      <label class="field field-search" for="coupon-search">
+        <span class="sr-only">Search coupons</span>
+        <input id="coupon-search" type="search" placeholder="Search code, campaign, or discount" />
+      </label>
+      <select aria-label="Coupon type">
+        <option>All coupon types</option>
+        <option>Percentage</option>
+        <option>Fixed amount</option>
+        <option>Free shipping</option>
+      </select>
+      <select aria-label="Coupon status">
+        <option>All statuses</option>
+        <option>Active</option>
+        <option>Scheduled</option>
+        <option>Expired</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Offer</th>
+            <th>Usage</th>
+            <th>Expiry</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>BLUSH15</td>
+            <td>15% off orders over R699</td>
+            <td>182 / 500</td>
+            <td>30 Jun 2026</td>
+            <td><span class="badge badge-success">Active</span></td>
+          </tr>
+          <tr>
+            <td>WELCOME100</td>
+            <td>R100 off first order</td>
+            <td>74 / 200</td>
+            <td>15 Jul 2026</td>
+            <td><span class="badge badge-warning">Scheduled</span></td>
+          </tr>
+          <tr>
+            <td>FREESHIP</td>
+            <td>Free delivery over R799</td>
+            <td>1,024 / 1,000</td>
+            <td>Expired</td>
+            <td><span class="badge badge-muted">Expired</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
+{% endblock %}

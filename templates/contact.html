@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %} | Contact{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <p class="eyebrow">Contact</p>
+  <h1>We are here to help with sizing, orders, and delivery.</h1>
+  <p>Send a message and our team will get back to you with quick, discreet support.</p>
+</section>
+
+<section class="section contact-layout">
+  <form class="contact-form" action="{{ url_for('contact') }}" method="post">
+    <label>
+      <span>Your name</span>
+      <input type="text" name="name" autocomplete="name" required>
+    </label>
+    <label>
+      <span>Email address</span>
+      <input type="email" name="email" autocomplete="email" required>
+    </label>
+    <label>
+      <span>Subject</span>
+      <input type="text" name="subject" required>
+    </label>
+    <label>
+      <span>Message</span>
+      <textarea name="message" rows="6" required></textarea>
+    </label>
+    <button class="button button--solid" type="submit">Send message</button>
+  </form>
+
+  <aside class="info-panel info-panel--dark">
+    <p class="eyebrow">Support</p>
+    <h2>Fast answers, premium service</h2>
+    <ul class="feature-list">
+      <li>Order help</li>
+      <li>Fit guidance</li>
+      <li>Delivery updates</li>
+      <li>COD questions</li>
+    </ul>
+    <p class="summary-note">Prefer self-service? Visit the FAQ for instant answers.</p>
+  </aside>
+</section>
+{% endblock %}

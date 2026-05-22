@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %} | Cart{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <p class="eyebrow">Shopping bag</p>
+  <h1>Your Cart</h1>
+  <p>Review your selected pieces before moving to a cash-on-delivery checkout.</p>
+</section>
+
+<section class="section cart-layout">
+  <article class="cart-items">
+    {% for item in cart_items %}
+      <div class="cart-item" id="cart-item-{{ item.id }}">
+        <div class="cart-item__media">
+          {% if item.image_url %}
+            <img src="{{ item.image_url }}" alt="{{ item.product_name }}">
+          {% else %}
+            <img src="/static/images/placeholder.jpg" alt="{{ item.product_name }}">
+          {% endif %}
+        </div>
+        <div class="cart-item__body">
+          <div class="cart-item__details">
+            <h4><a href="/product/{{ item.product_slug }}" style="color: var(--color-black); font-weight: 700;">{{ item.product_name }}</a></h4>
+            <div class="cart-item__meta" style="margin-bottom: 0.5rem;">
+              {% if item.selected_size %}<span>Size: <strong>{{ item.selected_size }}</strong></span>{% endif %}
+              {% if item.selected_color %}<span style="margin-left: 0.75rem;">Color: <strong>{{ item.selected_color }}</strong></span>{% endif %}
+            </div>
+            <strong style="font-size: 1.1rem; color: var(--color-gold);">{{ item.unit_price }} {{ currency_symbol }}</strong>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <!-- Stepper -->
+            <div style="display: flex; align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); padding: 0.25rem;">
+              <button onclick="changeQty({{ item.id }}, {{ item.quantity - 1 }})" style="border: 0; background: transparent; width: 30px; height: 30px; font-weight: bold; cursor: pointer; color: var(--color-charcoal);" {% if item.quantity <= 1 %}disabled{% endif %}>−</button>
+              <span style="font-weight: 700; width: 30px; text-align: center; font-size: 0.95rem;">{{ item.quantity }}</span>
+              <button onclick="changeQty({{ item.id }}, {{ item.quantity + 1 }})" style="border: 0; background: transparent; width: 30px; height: 30px; font-weight: bold; cursor: pointer; color: var(--color-charcoal);">+</button>
+            </div>
+            
+            <!-- Remove Button -->
+            <button onclick="removeQty({{ item.id }})" style="border: 0; background: transparent; color: var(--color-danger); cursor: pointer; font-size: 1.2rem; display: flex; align-items: center;" aria-label="Remove item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="empty-state" style="padding: 4rem 2rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-alt);">
+        <p style="font-size: 1.25rem; color: var(--color-muted); margin-bottom: 1.5rem;">Your shopping bag is empty.</p>
+        <a href="{{ url_for('shop') }}" class="button button--solid">Shop All Products</a>
+      </div>
+    {% endfor %}
+  </article>
+
+  {% if cart_items %}
+    <aside class="summary-card">
+      <p class="eyebrow">Order summary</p>
+      <h2>Ready to checkout?</h2>
+      <div class="summary-lines">
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <strong id="cart-subtotal">{{ subtotal }} {{ currency_symbol }}</strong>
+        </div>
+        <div class="summary-line">
+          <span>Shipping</span>
+          <strong id="cart-shipping">{{ shipping_amount }} {{ currency_symbol }}</strong>
+        </div>
+        <div class="summary-line summary-line--total">
+          <span>Total</span>
+          <strong id="cart-total">{{ total_amount }} {{ currency_symbol }}</strong>
+        </div>
+      </div>
+      <a class="button button--solid" href="{{ url_for('checkout') }}" style="width: 100%; text-align: center;">Proceed to Checkout</a>
+      <p class="summary-note" style="margin-top: 1rem;">Free shipping on orders above 2,000 {{ currency_symbol }}!</p>
+    </aside>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeQty(cartId, newQty) {
+  if (newQty < 1) return;
+  fetch('/api/cart/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ cart_id: cartId, quantity: newQty })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      window.location.reload();
+    } else {
+      Kacooli.showNotification(data.error || 'Failed to update quantity', 'danger');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    Kacooli.showNotification('An error occurred.', 'danger');
+  });
+}
+
+function removeQty(cartId) {
+  if (!confirm('Are you sure you want to remove this item?')) return;
+  fetch('/api/cart/remove', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ cart_id: cartId })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      window.location.reload();
+    } else {
+      Kacooli.showNotification(data.error || 'Failed to remove item', 'danger');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    Kacooli.showNotification('An error occurred.', 'danger');
+  });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Banners | Admin | Kacooli Boutique{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<section class="admin-shell admin-banners">
+  <header class="admin-hero">
+    <div>
+      <p class="section-eyebrow">Secure admin area</p>
+      <h1>Banners</h1>
+      <p class="section-lead">Manage homepage and campaign banners with quick publish and seasonal control.</p>
+    </div>
+    <div class="admin-trust">
+      <span class="badge badge-secure">Protected access</span>
+      <span class="admin-meta">Scheduled publishes enabled</span>
+    </div>
+  </header>
+
+  <nav class="admin-subnav" aria-label="Admin navigation">
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/products">Products</a>
+    <a href="/admin/orders">Orders</a>
+    <a href="/admin/users">Users</a>
+    <a class="is-active" href="/admin/banners">Banners</a>
+    <a href="/admin/reviews">Reviews</a>
+    <a href="/admin/coupons">Coupons</a>
+  </nav>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <p class="section-eyebrow">Campaign control</p>
+        <h2>Banner library</h2>
+      </div>
+      <a class="text-link" href="/admin/banners">Create banner</a>
+    </div>
+
+    <div class="table-toolbar">
+      <label class="field field-search" for="banner-search">
+        <span class="sr-only">Search banners</span>
+        <input id="banner-search" type="search" placeholder="Search campaign, placement, or promo text" />
+      </label>
+      <select aria-label="Banner placement">
+        <option>All placements</option>
+        <option>Homepage hero</option>
+        <option>Category strip</option>
+        <option>Checkout promo</option>
+      </select>
+      <select aria-label="Banner status">
+        <option>All statuses</option>
+        <option>Live</option>
+        <option>Scheduled</option>
+        <option>Paused</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Banner</th>
+            <th>Placement</th>
+            <th>Promo</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Spring lace edit</td>
+            <td>Homepage hero</td>
+            <td>Up to 25% off</td>
+            <td><span class="badge badge-success">Live</span></td>
+          </tr>
+          <tr>
+            <td>Bundle and save</td>
+            <td>Checkout promo</td>
+            <td>Free shipping over R799</td>
+            <td><span class="badge badge-warning">Scheduled</span></td>
+          </tr>
+          <tr>
+            <td>New arrivals</td>
+            <td>Category strip</td>
+            <td>Fresh lingerie edit</td>
+            <td><span class="badge badge-muted">Paused</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
+{% endblock %}

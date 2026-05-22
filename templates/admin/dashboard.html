@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard | Kacooli Boutique{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+
+{% block content %}
+<section class="admin-shell admin-dashboard">
+  <header class="admin-hero">
+    <div>
+      <p class="section-eyebrow">Secure admin area</p>
+      <h1>Admin dashboard</h1>
+      <p class="section-lead">Track sales, order flow, stock pressure, and moderation work from one clean control panel.</p>
+    </div>
+    <div class="admin-trust">
+      <span class="badge badge-secure">Protected access</span>
+      <span class="admin-meta">2FA enabled</span>
+      <span class="admin-meta">Last sign-in: today, 09:42</span>
+    </div>
+  </header>
+
+  <nav class="admin-subnav" aria-label="Admin navigation">
+    <a class="is-active" href="/admin">Dashboard</a>
+    <a href="/admin/products">Products</a>
+    <a href="/admin/orders">Orders</a>
+    <a href="/admin/users">Users</a>
+    <a href="/admin/banners">Banners</a>
+    <a href="/admin/reviews">Reviews</a>
+    <a href="/admin/coupons">Coupons</a>
+  </nav>
+
+  <section class="stats-grid" aria-label="Key metrics">
+    <article class="stat-card">
+      <p class="stat-label">Revenue today</p>
+      <strong class="stat-value">R 42,580</strong>
+      <span class="stat-note positive">+12.4% vs yesterday</span>
+    </article>
+    <article class="stat-card">
+      <p class="stat-label">Orders in progress</p>
+      <strong class="stat-value">86</strong>
+      <span class="stat-note">14 awaiting courier handoff</span>
+    </article>
+    <article class="stat-card">
+      <p class="stat-label">Low stock items</p>
+      <strong class="stat-value">9</strong>
+      <span class="stat-note warning">3 sizes need urgent restock</span>
+    </article>
+    <article class="stat-card">
+      <p class="stat-label">Review rating</p>
+      <strong class="stat-value">4.8 / 5</strong>
+      <span class="stat-note positive">312 new customer ratings</span>
+    </article>
+  </section>
+
+  <section class="admin-grid">
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <p class="section-eyebrow">Performance snapshot</p>
+          <h2>Sales funnel health</h2>
+        </div>
+        <a class="text-link" href="/admin/orders">View orders</a>
+      </div>
+
+      <div class="mini-metrics">
+        <div>
+          <span class="mini-label">Conversion</span>
+          <strong>3.9%</strong>
+        </div>
+        <div>
+          <span class="mini-label">COD share</span>
+          <strong>68%</strong>
+        </div>
+        <div>
+          <span class="mini-label">Refund rate</span>
+          <strong>1.1%</strong>
+        </div>
+      </div>
+
+      <div class="table-toolbar">
+        <label class="field field-search" for="dashboard-search">
+          <span class="sr-only">Search dashboard data</span>
+          <input id="dashboard-search" type="search" placeholder="Search orders, products, customers" />
+        </label>
+        <select aria-label="Dashboard range filter">
+          <option>Last 7 days</option>
+          <option>Last 30 days</option>
+          <option>This month</option>
+        </select>
+      </div>
+    </article>
+
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <p class="section-eyebrow">Operations</p>
+          <h2>Quick actions</h2>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <a href="/admin/products" class="action-card">
+          <strong>Manage products</strong>
+          <span>Update stock, pricing, and visibility.</span>
+        </a>
+        <a href="/admin/orders" class="action-card">
+          <strong>Review orders</strong>
+          <span>Approve COD and track fulfilment.</span>
+        </a>
+        <a href="/admin/banners" class="action-card">
+          <strong>Refresh banners</strong>
+          <span>Swap promos for seasonal campaigns.</span>
+        </a>
+      </div>
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <p class="section-eyebrow">Alerts</p>
+        <h2>Low stock and urgent tasks</h2>
+      </div>
+      <a class="text-link" href="/admin/products">Open inventory</a>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Variant</th>
+            <th>Stock</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Satin push-up bra</td>
+            <td>Black / 34B</td>
+            <td>4</td>
+            <td><span class="badge badge-warning">Low stock</span></td>
+          </tr>
+          <tr>
+            <td>Lace thong set</td>
+            <td>Blush / M</td>
+            <td>2</td>
+            <td><span class="badge badge-danger">Urgent</span></td>
+          </tr>
+          <tr>
+            <td>Everyday seamless brief</td>
+            <td>Cream / L</td>
+            <td>9</td>
+            <td><span class="badge badge-neutral">Watch</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
+{% endblock %}

@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+{% block title %} | {{ product.name }}{% endblock %}
+
+{% block content %}
+<section class="product-detail" style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4rem; margin: 3rem 0; align-items: start;">
+  <!-- Left Side: Product Gallery -->
+  <div class="product-gallery" data-product-gallery="true" style="position: relative;">
+    <!-- Main Image -->
+    <div class="product-gallery__main" style="border-radius: var(--radius-lg); overflow: hidden; background: var(--color-surface); height: 500px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-border);">
+      {% if images %}
+        {% set primary_image = images|selectattr('is_primary', 'equalto', 1)|first|default(images[0]) %}
+        <img src="{{ primary_image.image_url }}" alt="{{ product.name }}" data-product-main="true" class="{% if not is_logged_in %}blurred-img{% endif %}" style="width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s; {% if not is_logged_in %}filter: blur(12px); pointer-events: none;{% endif %}">
+      {% else %}
+        <img src="/static/images/placeholder.jpg" alt="Placeholder" data-product-main="true" style="width: 100%; height: 100%; object-fit: cover;">
+      {% endif %}
+    </div>
+
+    <!-- Gallery Thumbnails -->
+    {% if images and images|length > 1 %}
+      <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: center;">
+        {% for img in images %}
+          <div class="product-thumb {% if img.is_primary %}is-active{% endif %}" data-product-thumb="true" data-full-src="{{ img.image_url }}" style="width: 70px; height: 85px; border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 2px solid {% if img.is_primary %}var(--color-gold){% else %}transparent{% endif %}; background: var(--color-surface); transition: border-color 0.2s;">
+            <img src="{{ img.image_url }}" alt="Thumbnail" class="{% if not is_logged_in %}blurred-img{% endif %}" style="width: 100%; height: 100%; object-fit: cover; {% if not is_logged_in %}filter: blur(4px);{% endif %}">
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Members Only Blur Overlay -->
+    {% if not is_logged_in %}
+      <div class="locked-layer" style="position: absolute; inset: 0; background: rgba(252, 248, 243, 0.4); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; border-radius: var(--radius-lg); text-align: center; padding: 2rem;">
+        <div class="locked-layer__card" style="background: var(--color-surface); border: 1px solid var(--color-gold); padding: 2.5rem; border-radius: var(--radius-md); box-shadow: var(--color-shadow); max-width: 380px;">
+          <span class="eyebrow" style="color: var(--color-gold); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; display: block; margin-bottom: 0.5rem;">Signature Portal</span>
+          <h2 style="font-family: var(--font-serif); margin-top: 0; font-size: 1.5rem; color: var(--color-black);">Unlock Lingerie details</h2>
+          <p style="color: var(--color-muted); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">
+            Create an account or login to unlock full-resolution product images, sizing guides, and place orders.
+          </p>
+          <a class="button button--solid" href="{{ url_for('login') }}" style="width: 100%;">Sign In To Unlock</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Right Side: Details & Actions -->
+  <div class="product-detail__body">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <p class="eyebrow">{{ product.category_name|default('Lingerie') }}</p>
+      {% if is_logged_in %}
+        <button class="wishlist-trigger {% if in_wishlist %}active{% endif %}" data-wishlist="true" data-product-id="{{ product.id }}" style="border: 1px solid var(--color-border); background: var(--color-surface); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" aria-label="Toggle wishlist">
+          ❤️
+        </button>
+      {% endif %}
+    </div>
+    
+    <h1 style="font-family: var(--font-serif); font-size: 2.5rem; margin: 0.5rem 0 1rem 0; line-height: 1.1; color: var(--color-black);">{{ product.name }}</h1>
+    
+    <!-- Average Rating -->
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+      <div style="color: var(--color-gold); font-size: 1.1rem;">
+        {% set avg_rating = 5 %}
+        {% if reviews %}
+          {% set ratings = reviews|map(attribute='rating')|list %}
+          {% set avg_rating = (ratings|sum / ratings|length)|round(1) %}
+        {% endif %}
+        {% for i in range(1, 6) %}
+          {% if avg_rating >= i %}★{% else %}☆{% endif %}
+        {% endfor %}
+      </div>
+      <span style="font-size: 0.88rem; color: var(--color-muted);">({{ reviews|length }} reviews)</span>
+    </div>
+
+    <!-- Price Section -->
+    <div style="margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 1rem;">
+      <span style="font-size: 2rem; font-weight: 700; color: var(--color-black);">{{ product.price }} {{ currency_symbol }}</span>
+      {% if product.compare_at_price %}
+        <span style="font-size: 1.25rem; text-decoration: line-through; color: var(--color-muted);">{{ product.compare_at_price }} {{ currency_symbol }}</span>
+      {% endif %}
+    </div>
+
+    <p style="color: var(--color-muted); line-height: 1.6; font-size: 1.05rem; margin-bottom: 2rem;">
+      {{ product.description }}
+    </p>
+
+    {% if is_logged_in %}
+      <!-- Selection Options -->
+      <div style="margin-bottom: 2rem; border-top: 1px solid var(--color-border); padding-top: 1.5rem;">
+        <!-- Color Choice -->
+        <div style="margin-bottom: 1.5rem;">
+          <span style="font-weight: 600; display: block; margin-bottom: 0.5rem; font-size: 0.95rem;">Select Color</span>
+          <div style="display: flex; gap: 0.75rem;">
+            {% for color in ['Midnight Black', 'Rose Blush', 'Champagne Gold', 'Crimson Red'] %}
+              <label style="position: relative; cursor: pointer;">
+                <input type="radio" name="color-select" value="{{ color }}" {% if loop.first %}checked{% endif %} style="position: absolute; opacity: 0;">
+                <span class="color-swatch-label" style="display: inline-block; padding: 0.5rem 1.25rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); font-size: 0.88rem; font-weight: 600; background: var(--color-surface); transition: all 0.2s;">{{ color }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Size Choice -->
+        <div style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+            <span style="font-weight: 600; font-size: 0.95rem;">Select Size</span>
+            <button onclick="openSizeGuideModal()" style="border: 0; background: transparent; color: var(--color-gold); font-size: 0.85rem; font-weight: 700; cursor: pointer; text-decoration: underline;">Size Guide</button>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            {% set sizes = ['32B', '34B', '36B', '38B'] if 'bra' in product.name|lower or 'bra' in product.category_name|lower else ['S', 'M', 'L', 'XL'] %}
+            {% for size in sizes %}
+              <label style="position: relative; cursor: pointer;">
+                <input type="radio" name="size-select" value="{{ size }}" {% if loop.first %}checked{% endif %} style="position: absolute; opacity: 0;">
+                <span class="size-swatch-label" style="display: inline-block; width: 48px; height: 48px; border: 1px solid var(--color-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; background: var(--color-surface); transition: all 0.2s;">{{ size }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2.5rem;">
+        <button onclick="addProductToCart({{ product.id }})" class="button button--solid" style="min-height: 52px; font-size: 1.05rem;">Add to Bag</button>
+        <button onclick="buyOnCOD({{ product.id }})" class="button button--outline" style="min-height: 52px; font-size: 1.05rem; border-color: var(--color-black);">Buy on COD</button>
+      </div>
+    {% endif %}
+
+    <!-- Specifications Accordion -->
+    <div class="accordion" data-accordion="true" style="border-top: 1px solid var(--color-border);">
+      <div class="accordion-item" data-accordion-item="true" style="border-bottom: 1px solid var(--color-border); padding: 1rem 0;">
+        <button class="accordion-trigger" data-accordion-trigger="true" style="width: 100%; border: 0; background: transparent; text-align: left; display: flex; justify-content: space-between; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--color-black);" aria-expanded="false">
+          <span>Material & Care Details</span>
+          <span>＋</span>
+        </button>
+        <div class="accordion-panel" data-accordion-panel="true" hidden style="margin-top: 0.75rem; color: var(--color-muted); font-size: 0.95rem; line-height: 1.5;">
+          <p>Material: {{ product.material|default('Premium soft silk and cotton blend lace') }}</p>
+          <p>Care: {{ product.care_instructions|default('Gentle hand wash only. Do not bleach. Air dry in shade.') }}</p>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-accordion-item="true" style="border-bottom: 1px solid var(--color-border); padding: 1rem 0;">
+        <button class="accordion-trigger" data-accordion-trigger="true" style="width: 100%; border: 0; background: transparent; text-align: left; display: flex; justify-content: space-between; font-weight: 700; font-size: 1rem; cursor: pointer; color: var(--color-black);" aria-expanded="false">
+          <span>COD Delivery & Free Return Details</span>
+          <span>＋</span>
+        </button>
+        <div class="accordion-panel" data-accordion-panel="true" hidden style="margin-top: 0.75rem; color: var(--color-muted); font-size: 0.95rem; line-height: 1.5;">
+          <p>📦 Delivery time: Dhaka (24–48 Hours), Outside Dhaka (3–5 Days).</p>
+          <p>💵 Payment: Cash on Delivery supported nationwide. You can inspect the package before payment.</p>
+          <p>🔄 Returns: 7-day hassle-free returns on unworn items with tags intact (except innerwear due to hygiene standards).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Size Guide Modal -->
+<div id="sizeGuideModal" class="exit-popup" style="z-index: 2000;">
+  <div class="exit-popup-card" style="max-width: 600px; text-align: left;">
+    <button class="exit-popup-close" onclick="closeSizeGuideModal()">✕</button>
+    <h2 style="font-family: var(--font-serif); text-align: center; border-bottom: 1px solid var(--color-border); padding-bottom: 1rem;">Sizing & Measurement Guide</h2>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.9rem;">
+      <thead>
+        <tr style="background: var(--color-surface-alt); border-bottom: 2px solid var(--color-border);">
+          <th style="padding: 0.75rem; text-align: left;">Size</th>
+          <th style="padding: 0.75rem; text-align: left;">Bust (inches)</th>
+          <th style="padding: 0.75rem; text-align: left;">Waist (inches)</th>
+          <th style="padding: 0.75rem; text-align: left;">Hips (inches)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid var(--color-border);">
+          <td style="padding: 0.75rem; font-weight: 700;">S (32)</td>
+          <td style="padding: 0.75rem;">32 - 34</td>
+          <td style="padding: 0.75rem;">24 - 26</td>
+          <td style="padding: 0.75rem;">34 - 36</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--color-border);">
+          <td style="padding: 0.75rem; font-weight: 700;">M (34)</td>
+          <td style="padding: 0.75rem;">34 - 36</td>
+          <td style="padding: 0.75rem;">26 - 28</td>
+          <td style="padding: 0.75rem;">36 - 38</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--color-border);">
+          <td style="padding: 0.75rem; font-weight: 700;">L (36)</td>
+          <td style="padding: 0.75rem;">36 - 38</td>
+          <td style="padding: 0.75rem;">28 - 30</td>
+          <td style="padding: 0.75rem;">38 - 40</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--color-border);">
+          <td style="padding: 0.75rem; font-weight: 700;">XL (38)</td>
+          <td style="padding: 0.75rem;">38 - 40</td>
+          <td style="padding: 0.75rem;">30 - 32</td>
+          <td style="padding: 0.75rem;">40 - 42</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size: 0.82rem; color: var(--color-muted); margin-top: 1.5rem; text-align: center; line-height: 1.4;">
+      Need fit support? Connect with our sizing advisors via the WhatsApp button at the bottom of the page.
+    </p>
+  </div>
+</div>
+
+<!-- Reviews Section -->
+<section class="section" style="margin: 4rem 0; border-top: 1px solid var(--color-border); padding-top: 3rem;">
+  <div style="display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 4rem;">
+    <!-- Reviews Statistics & Write Review -->
+    <div>
+      <h2 style="font-family: var(--font-serif); font-size: 2rem; margin: 0 0 1.5rem 0;">Customer Reviews</h2>
+      
+      {% if is_logged_in %}
+        <div style="background: var(--color-surface-alt); border: 1px solid var(--color-border); padding: 2rem; border-radius: var(--radius-md);">
+          <h4 style="font-family: var(--font-serif); margin-top: 0; font-size: 1.25rem;">Write a Review</h4>
+          <form id="reviewForm" class="form-stack" style="margin-top: 1rem;">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <div class="field">
+              <label for="reviewRating">Rating</label>
+              <select id="reviewRating" name="rating" required style="border-radius: var(--radius-pill); border: 1px solid var(--color-border); padding: 0.6rem 1rem;">
+                <option value="5">5 Stars - Excellent</option>
+                <option value="4">4 Stars - Very Good</option>
+                <option value="3">3 Stars - Good</option>
+                <option value="2">2 Stars - Fair</option>
+                <option value="1">1 Star - Poor</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="reviewComment">Your Feedback</label>
+              <textarea id="reviewComment" name="comment" rows="4" required placeholder="Describe your experience with the fit, material quality, and comfort..." style="border-radius: var(--radius-md); border: 1px solid var(--color-border); padding: 0.75rem;"></textarea>
+            </div>
+            <button class="button button--solid" type="submit" style="width: 100%; margin-top: 0.75rem;">Submit Secure Review</button>
+          </form>
+        </div>
+      {% else %}
+        <p style="color: var(--color-muted); font-size: 0.95rem; font-style: italic;">
+          Please sign in to submit a review for this product.
+        </p>
+      {% endif %}
+    </div>
+
+    <!-- Reviews List -->
+    <div>
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        {% for review in reviews %}
+          <div style="border-bottom: 1px solid var(--color-border); padding-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <strong style="color: var(--color-black); font-size: 1.05rem;">{{ review.customer_name }}</strong>
+              <span style="font-size: 0.82rem; color: var(--color-muted);">{{ review.created_at }}</span>
+            </div>
+            <div style="color: var(--color-gold); font-size: 0.95rem; margin-bottom: 0.5rem;">
+              {% for i in range(1, 6) %}
+                {% if review.rating >= i %}★{% else %}☆{% endif %}
+              {% endfor %}
+            </div>
+            <p style="color: var(--color-charcoal); line-height: 1.5; margin: 0; font-size: 0.95rem;">
+              {{ review.comment }}
+            </p>
+          </div>
+        {% else %}
+          <div style="padding: 3rem 1.5rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-alt);">
+            <p style="color: var(--color-muted); margin: 0;">No reviews have been written for this product yet.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Complete the Look section -->
+{% if related_products %}
+<section class="section" style="margin: 4rem 0; border-top: 1px solid var(--color-border); padding-top: 3rem;">
+  <div class="section-heading">
+    <p class="eyebrow">More from the collection</p>
+    <h2>Complete the Look</h2>
+  </div>
+
+  <div class="product-grid">
+    {% for item in related_products %}
+      <article class="product-card" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; transition: box-shadow var(--transition-fast);">
+        <a class="product-card__media" href="{{ url_for('product_detail', slug=item.slug) }}" style="display: block; height: 320px; overflow: hidden; background: var(--color-cream); position: relative;">
+          {% if item.image_url %}
+            <img src="{{ item.image_url }}" alt="{{ item.name }}" class="{% if not is_logged_in %}blurred-img{% endif %}" style="width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-slow); {% if not is_logged_in %}filter: blur(8px);{% endif %}">
+          {% else %}
+            <img src="/static/images/placeholder.jpg" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+          {% endif %}
+        </a>
+        <div class="product-card__body" style="padding: 1.5rem;">
+          <h3 style="font-family: var(--font-serif); font-size: 1.15rem; margin: 0 0 0.5rem; font-weight: 700;">
+            <a href="{{ url_for('product_detail', slug=item.slug) }}" style="color: var(--color-black);">{{ item.name }}</a>
+          </h3>
+          <div class="product-card__footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+            <strong style="color: var(--color-gold); font-size: 1.1rem;">{{ item.price }} {{ currency_symbol }}</strong>
+            <a class="button button--small button--solid" href="{{ url_for('product_detail', slug=item.slug) }}">View Piece</a>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Thumbnail clicking
+document.addEventListener('DOMContentLoaded', function() {
+  const thumbs = document.querySelectorAll('[data-product-thumb]');
+  const mainImg = document.querySelector('[data-product-main]');
+  thumbs.forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      const src = this.getAttribute('data-full-src');
+      if (mainImg && src) {
+        mainImg.src = src;
+      }
+      thumbs.forEach(t => t.style.borderColor = 'transparent');
+      this.style.borderColor = 'var(--color-gold)';
+    });
+  });
+
+  // Handle Review submission
+  const revForm = document.getElementById('reviewForm');
+  if (revForm) {
+    revForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const pId = revForm.querySelector('[name="product_id"]').value;
+      const rating = revForm.querySelector('[name="rating"]').value;
+      const comment = revForm.querySelector('[name="comment"]').value;
+
+      fetch('/api/reviews/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ product_id: parseInt(pId), rating: parseInt(rating), comment: comment })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          Kacooli.showNotification('Your review has been submitted successfully and is pending approval!', 'success');
+          revForm.reset();
+        } else {
+          Kacooli.showNotification(data.error || 'Failed to submit review', 'danger');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        Kacooli.showNotification('An error occurred. Please try again.', 'danger');
+      });
+    });
+  }
+});
+
+// Selector swatches state highlighting
+document.addEventListener('change', function(e) {
+  if (e.target.name === 'color-select') {
+    document.querySelectorAll('.color-swatch-label').forEach(sw => {
+      sw.style.borderColor = 'var(--color-border)';
+      sw.style.color = 'var(--color-text)';
+      sw.style.background = 'var(--color-surface)';
+    });
+    const label = e.target.nextElementSibling;
+    label.style.borderColor = 'var(--color-gold)';
+    label.style.color = 'var(--color-black)';
+    label.style.background = 'var(--color-blush-soft)';
+  }
+  if (e.target.name === 'size-select') {
+    document.querySelectorAll('.size-swatch-label').forEach(sw => {
+      sw.style.borderColor = 'var(--color-border)';
+      sw.style.color = 'var(--color-text)';
+      sw.style.background = 'var(--color-surface)';
+    });
+    const label = e.target.nextElementSibling;
+    label.style.borderColor = 'var(--color-gold)';
+    label.style.color = 'var(--color-black)';
+    label.style.background = 'var(--color-blush-soft)';
+  }
+});
+
+// Selection style highlights initialization
+window.addEventListener('load', function() {
+  const checkedColorInput = document.querySelector('input[name="color-select"]:checked');
+  if (checkedColorInput) {
+    const label = checkedColorInput.nextElementSibling;
+    label.style.borderColor = 'var(--color-gold)';
+    label.style.color = 'var(--color-black)';
+    label.style.background = 'var(--color-blush-soft)';
+  }
+  const checkedSizeInput = document.querySelector('input[name="size-select"]:checked');
+  if (checkedSizeInput) {
+    const label = checkedSizeInput.nextElementSibling;
+    label.style.borderColor = 'var(--color-gold)';
+    label.style.color = 'var(--color-black)';
+    label.style.background = 'var(--color-blush-soft)';
+  }
+});
+
+function getSelectedOptions() {
+  const colorInput = document.querySelector('input[name="color-select"]:checked');
+  const sizeInput = document.querySelector('input[name="size-select"]:checked');
+  return {
+    color: colorInput ? colorInput.value : '',
+    size: sizeInput ? sizeInput.value : ''
+  };
+}
+
+function addProductToCart(productId) {
+  const opts = getSelectedOptions();
+  Kacooli.addToCart(productId, 1, opts.size, opts.color);
+}
+
+function buyOnCOD(productId) {
+  const opts = getSelectedOptions();
+  fetch('/api/cart/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ product_id: productId, quantity: 1, size: opts.size, color: opts.color })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      window.location.href = '/checkout';
+    } else {
+      Kacooli.showNotification(data.error || 'Checkout process error', 'danger');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    Kacooli.showNotification('Could not proceed to checkout.', 'danger');
+  });
+}
+
+// Modal open/close controls
+function openSizeGuideModal() {
+  const m = document.getElementById('sizeGuideModal');
+  if (m) {
+    m.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeSizeGuideModal() {
+  const m = document.getElementById('sizeGuideModal');
+  if (m) {
+    m.classList.remove('is-open');
+    document.body.style.overflow = 'auto';
+  }
+}
+</script>
+{% endblock %}
